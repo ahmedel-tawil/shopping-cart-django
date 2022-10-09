@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+       {% block title %}
+
+<title>Market Products </title>
+        {% endblock %}
+{% block content %}
+<section class="pb-0">
+<div class="container-fluid">
+    <h3 class="mb-0 p-1 text-hover-success" align="center">Grocery market products  </h3>
+  <div class="card mb-0">
+    <div class="card-body">
+      <div class="row gx-5 bg-white">
+      {% if messages %}
+            {% for message in messages %}
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+              <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Item Added!</strong> {{ request.user.first_name }}, {{ message }}
+              </div>
+              {% endif %}
+
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+              <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Info!</strong> {{ message }}
+              </div>
+              {% endif %}
+
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+              <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>Sorry!</strong> {{ message }}
+              </div>
+              {% endif %}
+
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+              <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Error!</strong> {{ message }}
+              </div>
+              {% endif %}
+
+            {% endfor %}
+          {% endif %}
+             <!-- Item -->
+            <div class="card-group">
+                {% for item in items %}
+                     <div class="col-xl-3 col-sm-6 py-4 ">
+                          <div class="d-flex align-items-center">
+                            <div class="card">
+                               {% if item.product_image %}<img src="{{ item.product_image.url }}" class="card-img-top" width="250" height="250" alt="...">{% else %}<img src="/static/images/cart.jpg" class="card-img-top" alt="...">{% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title" style="float:left;">{{ item.product_name }}</h5>
+                                    <h5 class="card-title" style="float:right;">{{ item.category.name }}</h5>
+                                </div>
+
+
+                            {% if item.available_qty > 0  %}
+                               <div class="card-body">
+                                     available in store<a class="badge rounded-pill bg-info ms-2 text-xs">  {{ item.available_qty }} {{ item.unit }}</a>
+                                </div>
+                                <div class="card-body">
+                                  <p class="card-text">{{ item.description|safe }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    {% if request.user.is_authenticated %}
+                                     <button class="update-cart btn btn-success"  data-item="{{ item.id }}"  data-action="add">Add to Cart</button>
+                                    <h3 style="float:right;">{{ item.product_price }} {{ item.price_currency }}</h3>
+                                    {% else %}
+                                     <a class="update-cart btn btn-info" href="{% url 'utilities:login_user' %}">Buy This Item</a>
+                                    {% endif %}
+                                </div>
+                                   {% else %}
+
+                                <div class="card-body">
+                                    Not Available now<a class="badge rounded-pill bg-danger ms-2 text-xs">  </a>
+                                </div>
+                                <div class="card-body">
+                                  <p class="card-text">{{ item.description|safe }}</p>
+                                </div>
+                                 <div class="card-footer">
+                                    {% if request.user.is_authenticated %}
+                                    <a class="btn btn-outline-danger">out of stock </a>
+                                    {% else %}
+                                     <a class="btn btn-outline-danger">out of stock </a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                              </div>
+
+                          </div>
+                    </div>
+                  {% endfor %}
+            </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+    <script>
+
+       const updateBttn = document.getElementsByClassName("update-cart");
+        for (let i = 0; i < updateBttn.length; i++) {
+            updateBttn[i].addEventListener("click", function(){
+                var itemId = this.dataset.item;
+                var action = this.dataset.action;
+                console.log('itemId:', itemId, 'Action:', action)
+                console.log('User:', user)
+                if (user == 'AnonymousUser'){
+                addCookieItem(itemId, action)
+             }else{
+                updateOrder(itemId, action)
+                }
+                    })
+                }
+
+            function updateOrder(itemId , action){
+                console.log('User is Logged, Sending Data')
+                var url =  '/cart/update-item/'
+                fetch(url,{
+                    method:'POST',
+                    headers:{
+                       'Content-Type':'application/json',
+                        'X-CSRFToken':csrftoken,
+                    },
+                    body:JSON.stringify({'itemId':itemId, 'action': action})
+
+                })
+                    .then((response) => {
+                       return response.json();
+                    })
+                    .then((data) => {
+                        location.reload()
+                    });
+            }
+
+
+
+    </script>
+
+
+
+{% endblock %}

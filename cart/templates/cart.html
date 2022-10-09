@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+   {% block title %}
+
+<title>{{ request.user.first_name }} {{ request.user.first_name }} Cart</title>
+        {% endblock %}
+
+
+     <div class="container">
+  <section class="pb-0">
+      <div class="container-fluid">
+            <div class="row gy-4">
+               <div class="card mb-0">
+                    <div class="card-body">
+                      <div class="row gx-5 bg-white">
+                        {% if messages %}
+                        {% for message in messages %}
+                          {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <div class="alert alert-success alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>Item Added!</strong> {{ request.user.first_name }}, {{ message }}
+                          </div>
+                          {% endif %}
+                          {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                          <div class="alert alert-info alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>Info!</strong> {{ request.user.first_name }}, {{ message }}
+                          </div>
+                          {% endif %}
+
+                          {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                          <div class="alert alert-warning alert-dismissable">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <strong>Sorry!</strong> {{ request.user.first_name }},  {{ message }}
+                          </div>
+                          {% endif %}
+
+                          {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <div class="alert alert-danger alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>{{ request.user.first_name }}!</strong> {{ message }}
+                          </div>
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                       <div class="table">
+                            <table class="table mb-0 table-bordered">
+                                <tr>
+                                    <th><h5>Items: <strong>{{cart.number_of_purchased_items}}</strong></h5></th>
+                                    <th><h5>Total:<strong> {{cart.total_cart_price|floatformat:2}}</strong></h5></th>
+                                    {% if cart_items.count > 0 %}
+                                    <th><a class="btn btn-success" href="{% url 'cart:cart-check-out' %}">Checkout</a></th>
+                                    {% else %}
+                                   <th><a class="btn btn-info">No items for checking out</a></th>
+                                    {% endif %}
+                                    <th><a class="btn btn-dark" href="{% url 'products:products-home' %}">Continue Shopping</a></th>
+                                    <th><a class="btn btn-danger" href="{% url 'cart:clear-cart' %}">Clear Cart items</a></th>
+                                </tr>
+                            </table>
+                            <br>
+                            <table  class="table mb-0 table-bordered">
+                              <thead>
+                                    <tr>
+                                        <th>product</th>
+                                        <th>Unit Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for item  in cart_items %}
+                                <tr>
+                                    <td ><p>{{item.product.product_name}}</p></td>
+                                    <td><p>{{item.product.product_price}}</p></td>
+                                    <td>
+
+                                        <div style="display: inline-block">
+                                             <a class="badge rounded-pill bg-info ms-2 text-xs"> <img data-item="{{item.product.id}}"  data-action="add" width="15px" class="update-cart" src="{% static  'images/plus.jpg' %}"></a>
+                                            <a class="badge rounded-pill bg-info ms-2 text-xs">{{item.quantity}}</a>
+                                             <a class="badge rounded-pill bg-info ms-2 text-xs"> <img data-item="{{item.product.id}}" data-action="remove"  width="15px" class=" update-cart" src="{% static  'images/minus.jpg' %}"></a>
+                                        </div>
+                                    </td>
+                                    <td>{{item.total_price|floatformat:2}}</td>
+                                 <th><a class="btn btn-danger" href="{% url 'cart:delete-item' item.id  %}">Remove</a></th>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                     </div>
+                    </div>
+                 </div>
+              </div>
+         </section>
+     </div>
+ <script>
+
+       const updateBttn = document.getElementsByClassName("update-cart");
+        for (let i = 0; i < updateBttn.length; i++) {
+            updateBttn[i].addEventListener("click", function(){
+                var itemId = this.dataset.item;
+                var action = this.dataset.action;
+                console.log('itemId:', itemId, 'Action:', action)
+                console.log('User:', user)
+                if (user == 'AnonymousUser'){
+                addCookieItem(itemId, action)
+             }else{
+                updateOrder(itemId, action)
+		}
+            })
+        }
+
+        function updateOrder(itemId , action){
+            console.log('User is Logged, Sending Data')
+            var url =  '/cart/update-item/'
+
+            fetch(url,{
+                method:'POST',
+                headers:{
+				   'Content-Type':'application/json',
+                    'X-CSRFToken':csrftoken,
+                },
+                body:JSON.stringify({'itemId':itemId, 'action': action})
+
+            })
+                .then((response) => {
+                   return response.json();
+                })
+                .then((data) => {
+                    location.reload()
+                });
+           }
+
+            function addCookieItem(productId, action){
+                console.log('User is not authenticated')
+
+                if (action === 'add'){
+                    if (cart[productId] === undefined){
+                    cart[productId] = {'quantity':1}
+
+                    }else{
+                        cart[productId]['quantity'] += 1
+                    }
+                }
+
+                if (action === 'remove'){
+                    cart[productId]['quantity'] -= 1
+
+                    if (cart[productId]['quantity'] <= 0){
+                        alert('The Item will be deleted..!')
+                        delete cart[productId];
+                    }
+                }
+                console.log('CART:', cart)
+                document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+                location.reload()
+            }
+    </script>
+
+
+{% endblock content %}
