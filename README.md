@@ -1,1 +1,2 @@
 # shopping-cart-django
+----------------------
