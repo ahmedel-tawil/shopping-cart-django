@@ -18,9 +18,11 @@ project live demo is at http://ahmedeltawil.pythonanywhere.com/
 
 
 ### installation 
- git clone the project to your directory using the following command 
+ clone the project to your directory using the following command 
 - git clone https://github.com/ahmedel-tawil/shopping-cart-django.git
  
+ inside the projct directory create a python virtual environment using command line with the following command  
  
-
+- virtualenv venv 
+- source venv/bin/activate
 
