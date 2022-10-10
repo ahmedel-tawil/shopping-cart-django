@@ -26,3 +26,16 @@ project live demo is at http://ahmedeltawil.pythonanywhere.com/
 - virtualenv venv 
 - source venv/bin/activate
 
+
+ install project dependencies. through the following command:
+ -pip install -r requirements.txt
+ 
+the project already contains the db.sqlite3 database file so  No Need to  run the migration commands, if you wich to start from the beginning delete the  db.sqlite3, then runs the following inside the project directory 
+ - python manage.py makemigrations
+ - python manage.py migrate
+ - python manage.py createsuperuser
+
+the next step is to run a develpment to start using the software from th following  command 
+- python manage.py runserver
+and in our browser navigate to http://127.0.0.1:8000/ 
+
