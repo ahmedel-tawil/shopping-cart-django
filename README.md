@@ -17,6 +17,10 @@ this a guide  explianing the functionality of the demo.
 project live demo is at http://ahmedeltawil.pythonanywhere.com/
 
 
-
+### installation 
+ git clone the project to your directory using the following command 
+- git clone https://github.com/ahmedel-tawil/shopping-cart-django.git
+ 
+ 
 
 
