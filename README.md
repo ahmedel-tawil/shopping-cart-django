@@ -16,6 +16,9 @@ this a guide  explianing the functionality of the demo.
 
 project live demo is at http://ahmedeltawil.pythonanywhere.com/
 
+username admin
+password admin
+
 
 ### installation 
  clone the project to your directory using the following command 
