@@ -14,6 +14,9 @@
     <!-- Choices CSS-->
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="/static/css/style.sea.css"  id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="/static/images/straweberry.png">
 
   </head>
             <body>
@@ -40,7 +43,7 @@
                       <form  method="POST" class="form-horizontal">
                         {% csrf_token%}
                         <div class="mx-auto" style="width: 400px;">
-{% for message in messages %}
+               {% for message in messages %}
                 <div class="alert alert-danger" role="alert">
                     {{message}}
                 </div>

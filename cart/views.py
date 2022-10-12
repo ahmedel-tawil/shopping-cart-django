@@ -72,13 +72,9 @@ def delete_item(request, id):
 
 
 def cart_check_out(request):
-    # checking user authentication
     customer = request.user.customer
-    # using get_or_create:
     cart, created = Cart.objects.get_or_create(customer=customer, finished=False)
-    # Getting cart items attached to that cart
     cart_items = cart.cartitems_set.all()
-
     numbers_of_items = cart.number_of_purchased_items
 
     context = {

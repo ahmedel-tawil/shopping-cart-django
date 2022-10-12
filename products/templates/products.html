@@ -105,13 +105,8 @@
             updateBttn[i].addEventListener("click", function(){
                 var itemId = this.dataset.item;
                 var action = this.dataset.action;
-                console.log('itemId:', itemId, 'Action:', action)
-                console.log('User:', user)
-                if (user == 'AnonymousUser'){
-                addCookieItem(itemId, action)
-             }else{
                 updateOrder(itemId, action)
-                }
+
                     })
                 }
 

@@ -6,7 +6,6 @@ from products.models import Product
 
 
 # Create your models here.
-
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT, null=True, blank=True)
     finished = models.BooleanField(default=False)
@@ -39,8 +38,6 @@ class CartItems(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     quantity = models.IntegerField(default=0)
     total_price = models.IntegerField(default=0)
-    # getting Total price of Item
-
 
     @property
     def get_total(self):

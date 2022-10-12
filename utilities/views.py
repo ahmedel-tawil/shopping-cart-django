@@ -6,9 +6,6 @@ from .forms import SignUpForm
 
 
 # Create your views here.
-# Create Signup Form for Users and Customers
-
-
 def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -21,9 +18,6 @@ def login_user(request):
         else:
             messages.info(request, 'Invalid Username or Password')
             return redirect('utilities:login_user')
-
-
-
     else:
         return render(request, 'login.html')
 
